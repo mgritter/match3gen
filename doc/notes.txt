@@ -1,0 +1,53 @@
+Ideas:
+
+generative grammar?
+generate-and-test?
+
+Each move is a permutation.  But randomly-generated permutations suck.
+So can we generate "sensible" ones by building them using some rule set?
+
+Some potential moves have symmetry while others do not.  For example,
+the move
+
+(y,0)->(y,1)->(y,2)->(y,3)->(y,0)
+
+could be rotated to produce a vertical move
+
+(0,x)->(1,x)->(2,x)->(3,x)->(0,x)
+
+But a move like
+
+(0,0)->(0,1)->(1,1)->(1,0)->(0,0)
+
+isn't fundamentally altered by rotation.  From a player experience point of
+view, is it always clear which moves can be performed both horizontally and
+vertically?
+
+Similarly, some moves are translatable and others are not.  The rotation
+
+(0,0)->(0,1)->(1,1)->(1,0)->(0,0)
+
+could be either.  We could either lock this move into its current location,
+or let somebody rotate any four squares.
+
+So, the generative process needs to somehow specify:
+  * Whether the moves are identical at all locations (translatable), or
+    whether they differ, for example by partitioning the play field.
+  * If partitioned, how?  Concentric, tesselations, ???
+  * Whether the moves are rotatable.  If you drag the mouse, what happens?
+    We can rotate in the direction of dragging, or leave the move the same.
+  * The permutation making up the base move.
+  * Is the permutation a cycle or multiple cycles?
+  * Can we move any length along the cycle, or only a limited number?
+
+Ideas for permutation generation:
+
+  * Trace the outline of a tesselation
+  * Generate a move and do a small tour with it
+  * random choice of single-step or jump N units in one of the directions,
+    followed by another random choice or ending the cycle (random walk)
+  * Generate a random small permutation and evaluate it for "goodness"
+
+
+
+
