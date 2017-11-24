@@ -1,3 +1,5 @@
+"""Random generations of tesselations of the rectangular grid."""
+
 import random
 
 def divisors( n ):
