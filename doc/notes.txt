@@ -43,6 +43,7 @@ So, the generative process needs to somehow specify:
 Ideas for permutation generation:
 
   * Trace the outline of a tesselation
+  * Generate a polyomino and do a Hamilton cycle of it
   * Generate a move and do a small tour with it
   * random choice of single-step or jump N units in one of the directions,
     followed by another random choice or ending the cycle (random walk)

@@ -8,7 +8,12 @@ import random
 # "Counting polyominoes: Yet another attack"
 # Discrete Mathematics
 # Volume 36, Issue 2, 1981, Pages 191-203
-
+#
+# The algorithm returns fixed polyominoes, so rotated/flipped versions
+# will be included.
+#
+# I used Python dictionaries for the linked list and the free points,
+# instead of allocating 2-d arrays of the required size.
 def allPolyominoesRecursive( targetSize,
                              polyomino,
                              untriedHead,
@@ -44,16 +49,15 @@ def allPolyominoesRecursive( targetSize,
             (y,x) = cell
             neighbors = [ ( y+1, x ), ( y-1, x ), ( y, x+1), (y, x-1 ) ]
             new = []
-            # Save the head for later
-            prevHead = untriedHead
+            childHead = untriedHead
             
             for n in neighbors:
                 if n in freePoints:
                     freePoints.remove( n )
                     new.append( n )
                     # Push onto front of list
-                    untriedList[n] = untriedHead
-                    untriedHead = n
+                    untriedList[n] = childHead
+                    childHead = n
                     
             # print "New neigbors", new
             
@@ -62,14 +66,13 @@ def allPolyominoesRecursive( targetSize,
             # order relationship never changes
             for p in allPolyominoesRecursive( targetSize,
                                               newPoly,
-                                              untriedHead,
+                                              childHead,
                                               untriedList,
                                               freePoints ):
                 yield p
 
             for n in new:
                 freePoints.add( n )
-            untriedHead = prevHead
             
         # 5. Remove newest cell
         # trivial?
@@ -89,7 +92,7 @@ def allPolyominoes( n ):
                                       freePoints ):
         yield p
 
-def printPolyominos( n ):
+def printPolyominoes( n ):
     count = 0
     for p in allPolyominoes( n ):
         count += 1
@@ -104,4 +107,51 @@ def printPolyominos( n ):
             s += "\n"
         print s
         
-                    
+
+import cairocffi as cairo
+from show import Show
+    
+def showPolyominoes( n ):
+    pList = list( allPolyominoes( n ) )
+    numPoly = len( pList )
+    cellPixels = 4
+    maxWidth = 1024
+    polyPerRow = maxWidth / ( (n+1) * cellPixels )
+    width = polyPerRow * (n+1) * cellPixels - cellPixels
+    polyRows = ( numPoly + polyPerRow - 1 ) / polyPerRow
+    height = polyRows * (n+1) * cellPixels - cellPixels
+
+    currX = 0
+    currY = 0
+    surface = cairo.ImageSurface( cairo.FORMAT_ARGB32,
+                                  width=width,
+                                  height=height )
+    context = cairo.Context( surface )
+    context.set_source_rgba( 1.0, 1.0, 1.0 )
+    context.rectangle( 0, 0, width, height )
+    context.fill()
+
+    context.set_line_width( 2 )
+    for p in pList:
+        context.set_source_rgba( 0.1, 0.2, 1.0, 1 ) 
+        # Polyominoes are aligned their bottom row at 0
+        # but may extend either +X or -X
+        minX = min( x for (y,x) in p )
+
+        for (py, px) in p:
+            context.rectangle( ( currX * (n+1) + px - minX ) * cellPixels,
+                               ( currY * (n+1) + py ) * cellPixels,
+                               cellPixels - 1,
+                               cellPixels - 1 )
+            context.fill()
+            
+        currX += 1
+        if currX == polyPerRow:
+            currX = 0
+            currY += 1
+            
+    Show( surface ).run()
+
+    surface.write_to_png( "fixed-polyominoes-" + str( n ) + ".png" )
+    
+    

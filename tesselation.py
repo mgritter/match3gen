@@ -14,7 +14,7 @@ def mutate( rectangle, ySize, xSize, n ):
     # Ax   => xA. or Ax or  Ax  but not  Ax x
     # xx       xx    .x     x.           .x
     #
-    # All these moves preserve out ability to tesselate "simply"
+    # All these moves preserve our ability to tesselate "simply"
     # although the example shown can still cover the plane.
     # FIXME: maybe come back and pick that up later.
     allowed = [ p for p in rectangle if p != (0,0) ]
